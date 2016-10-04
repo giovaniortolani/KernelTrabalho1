@@ -34,10 +34,9 @@ printChar:
     jmp     not_cr
 
     not_nl: 
-    #checks if enter was the character pressed
         cmp     $'\r', %al
         jne     not_cr
-        mov     $'\n', %al #newline
+        mov     $'\n', %al
         int     $0x10
     
     not_cr:
@@ -67,8 +66,6 @@ printBootVer:
 
 connectedDevices:
 
-reboot:
-
 availableRAM:
 
 
@@ -92,7 +89,7 @@ main:
     je      availableRAMMain
 
     call    printChar
-    jmp main
+    jmp     main
 
     clearScreenMain:
         call    clearScreen
@@ -103,7 +100,7 @@ main:
     connectedDevicesMain:
         jmp     main
     rebootMain:
-        jmp     main
+    
     availableRAMMain:
         jmp     main
 
