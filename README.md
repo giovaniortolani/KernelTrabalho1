@@ -14,14 +14,15 @@ Uma cópia deste projeto pode ser obtida usando o comando:
 https://github.com/SO-I-2016/KernelTrabalho1.git
 ```
 
-## Prerequisitos
+## Requisitos
 
-Até o presente momento, os únicos pré-requisitos conhecidos são:
+São necessários os seguintes programas para a compilação e execução:
 
 ```
 as
 ld
 qemu
+Makefile
 ```
 ## Execução
 
