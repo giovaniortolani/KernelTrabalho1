@@ -85,7 +85,6 @@ connectedDevices:
 
 availableRAM:
 
-
 main:
 
     call    readChar
@@ -117,7 +116,8 @@ main:
     connectedDevicesMain:
         jmp     main
     rebootMain:
-    
+        call    clearScreen
+        int     $0x19
     availableRAMMain:
         jmp     main
 
