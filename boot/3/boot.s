@@ -1,5 +1,5 @@
 # Copyright © 2016 ­ Giovani Ortolani Barbosa (8936648), Bruno　Lanzoni Rossi　
-# (4309596), Renan Rodrigues (9278132), Gustavo Henrique Oliveira Aguiar (8936912 ).
+# (4309596), Renan Rodrigues (9278132), Gustavo Henrique Oliveira Aguiar (8936912).
 # This file is part of KernelTrabalho1.
 #
 # KernelTrabalho1 is free software: you can redistribute it and/or modify
@@ -7,7 +7,7 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Foobar is distributed in the hope that it will be useful,
+# KernelTrabalho1 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.

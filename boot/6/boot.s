@@ -1,5 +1,5 @@
 # Copyright © 2016 ­ Giovani Ortolani Barbosa (8936648), Bruno　Lanzoni Rossi　
-# (4309596), Renan Rodrigues (9278132), Gustavo Henrique Oliveira Aguiar (8936912 ).
+# (4309596), Renan Rodrigues (9278132), Gustavo Henrique Oliveira Aguiar (8936912).
 # This file is part of KernelTrabalho1.
 #
 # KernelTrabalho1 is free software: you can redistribute it and/or modify
@@ -7,7 +7,7 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Foobar is distributed in the hope that it will be useful,
+# KernelTrabalho1 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -19,6 +19,7 @@
 .globl      _start
 .code16
 
+.type _start, @function
 _start:
 
     cli     # desabilita interrupcoes
@@ -32,6 +33,7 @@ _start:
 
     jmp     main
 
+.type readChar, @function
 readChar:
 
     movb    $0x00, %ah
@@ -39,6 +41,7 @@ readChar:
 
     ret
 
+.type printChar, @function
 printChar:
 
     movb    $0x0E, %ah 
@@ -59,6 +62,7 @@ printChar:
     notCR:
         ret
 
+.type clearScreen, @function
 clearScreen:
 
     movb    $0x00, %ah
@@ -67,6 +71,7 @@ clearScreen:
     
     ret
 
+.type printBootVer, @function
 printBootVer:
 
     movw    $str0, %si
@@ -81,12 +86,15 @@ printBootVer:
     printBootVerEnd:
         ret
 
+.type connectedDevices, @function
 connectedDevices:
 
+.type availableRAM, @function
 availableRAM:
 
+.type main, @function
 main:
-
+    
     call    readChar
 
     cmp     $'1', %al
@@ -121,7 +129,7 @@ main:
     availableRAMMain:
         jmp     main
 
-str0:    .asciz  "Bootloader v0.4\n\r"
+str0:    .asciz  "Bootloader v0.5\n\r"
 
 . = _start + 510 
 .byte   0x55, 0xAA
