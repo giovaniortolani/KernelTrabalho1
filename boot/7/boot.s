@@ -48,18 +48,18 @@ printChar:
     int     $0x10
 
     cmp     $'\n', %al
-    jne     .notNL
+    jne     notNL
     mov     $'\r', %al
     int     $0x10   
-    jmp     .notCR
+    jmp     notCR
 
-    .notNL: 
+    notNL: 
         cmp     $'\r', %al
-        jne     .notCR
+        jne     notCR
         mov     $'\n', %al
         int     $0x10
     
-    .notCR:
+    notCR:
         ret
 
 .type clearScreen, @function
@@ -75,12 +75,12 @@ clearScreen:
 printString:
     lodsb
     orb     %al, %al
-    jz      .printStringEnd
+    jz      printStringEnd
     movb    $0x0E, %ah
     int     $0x10
     jmp     printString
 
-    .printStringEnd:
+    printStringEnd:
         ret
 
 .type connectedDevices, @function
@@ -94,80 +94,47 @@ connectedDevices:
 
     and     $0x0001, %ax
     cmp     $0, %ax
-    je      .disketteNOTFound
+    je      disketteNOTFound
     movw    $disketteF, %si
     call    printString
-    jmp     .coprocessor
+    jmp     coprocessor
 
-    .disketteNOTFound:
+    disketteNOTFound:
         movw    $disketteNF, %si
         call    printString
 
-    .coprocessor:
+    coprocessor:
         movw    %bx, %ax
         and     $0x0002, %ax
         cmp     $0, %ax
-        je      .coprocessorNOTFound
+        je      coprocessorNOTFound
         movw    $coprocessorF, %si
         call    printString
-        jmp     .pointingdev
+        jmp     pointingdev
 
-        .coprocessorNOTFound:
+        coprocessorNOTFound:
             movw    $coprocessorNF, %si
             call    printString
 
-        .pointingdev:
+        pointingdev:
             movw    %bx, %ax
             and     $0x0004, %ax
             cmp     $0, %ax
-            je      .pointingdevNOTFound
+            je      pointingdevNOTFound
             movw    $pointingdevF, %si
             call    printString
-            jmp     .connectedDevicesEnd
+            jmp     connectedDevicesEnd
 
-            .pointingdevNOTFound:
+            pointingdevNOTFound:
                 movw    $pointingdevNF, %si
                 call    printString
 
-    .connectedDevicesEnd:
+    connectedDevicesEnd:
         ret
 
 .type availableRAM, @function
 availableRAM:
-    
-    int     $0x12
-
-    movw    %ax, %bx
-    and     $0xF, %al
-    xorw    %cx, %cx
-    movw    $16, %cx
-
-    .printHEX:
-        sub     $4, %cx
-        shr     %cl, %ax
-        and     $0xF, %ax
-
-        cmp     $10, %ax
-        jl      .printHEXnumber
-
-        # apos a mascara fica 00001111 (15 dec - 0F hex) - tab. ASCII
-        # subtraimos 10 para ficar 00000101
-        # 0100 0110 (F) = 00000101 (%ax) + 0100 0001 (A)
-        sub     $10, %ax    
-        add     $'A', %ax
-        call    printChar
-        jmp     .printHEXend
-
-        .printHEXnumber:
-            add     $'0', %ax
-            call    printChar
-
-        .printHEXend:
-            movw    %bx, %ax
-            cmp     $0, %cx
-            jne     .printHEX
-
-    ret
+# int 12
 
 .type main, @function
 main:
@@ -175,57 +142,50 @@ main:
     call    readChar
 
     cmp     $'1', %al
-    je      .clearScreenMain
+    je      clearScreenMain
 
     cmp     $'2', %al
-    je      .printBootVerMain    
+    je      printBootVerMain    
 
     cmp     $'3', %al
-    je      .connectedDevicesMain
+    je      connectedDevicesMain
 
     cmp     $'4', %al
-    je      .rebootMain
+    je      rebootMain
 
     cmp     $'5', %al
-    je      .availableRAMMain
+    je      availableRAMMain
 
     call    printChar
     jmp     main
 
-    .clearScreenMain:
+    clearScreenMain:
         call    clearScreen
         jmp     main
-    .printBootVerMain:
+    printBootVerMain:
         movw    $versionmsg, %si
         call    printString
         movw    $version, %si
         call    printString
         jmp     main
-    .connectedDevicesMain:
+    connectedDevicesMain:
         call    connectedDevices
         jmp     main
-    .rebootMain:
+    rebootMain:
         call    clearScreen
         int     $0x19
-    .availableRAMMain:
-        movw    $rammsg, %si
-        call    printString
-        call    availableRAM
-        movw    $rammsg2, %si
-        call    printString
+    availableRAMMain:
         jmp     main
 
 versionmsg:     .asciz  "Version:\n\r"
 version:        .asciz  "KernelTrabalho1 v0.5\n\r"
-rammsg:         .asciz  "RAM available:\r\n0x"
-rammsg2:        .asciz  " kB\r\n"
 connected:      .asciz  "Devices:\n\r"
 disketteF:      .asciz  "Diskette found\n\r"
 disketteNF:     .asciz  "Diskette not found\n\r"
 coprocessorF:   .asciz  "Math coprocessor found\n\r"
 coprocessorNF:  .asciz  "Math coprocessor not found\n\r"
-pointingdevF:   .asciz  "Pointing device found\n\r"
-pointingdevNF:  .asciz  "Pointing device not found\n\r"
+pointingdevF:   .asciz  "Poiting device found\n\r"
+pointingdevNF:  .asciz  "Poiting device not found\n\r"
 
 . = _start + 510 
 .byte   0x55, 0xAA
