@@ -21,6 +21,7 @@ São necessários os seguintes programas para a compilação e execução:
 ```
 as
 ld
+objcopy
 qemu
 Makefile
 ```
@@ -28,7 +29,7 @@ Makefile
 
 Executar o comando
 ```
-make
+$ make
 ```
 em qualquer uma das pastas do projeto.
 
