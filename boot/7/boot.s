@@ -23,7 +23,7 @@
 _start:
 
     cli     # desabilita interrupcoes
-    # limpa os registradores (faz um XOR com ele proprio)
+    # limpa os registradores
     xorw    %ax, %ax    
     movw    %ax, %ds
     movw    %ax, %ss
@@ -35,22 +35,25 @@ _start:
 
 .type readChar, @function
 readChar:
-
-    movb    $0x00, %ah
-    int     $0x16    
+    
+    movb    $0x00, %ah  # AH = codigo leitura de teclado
+    int     $0x16       # interrupcao de teclado
+    # AL = ascii tecla pressionada             
 
     ret
 
 .type printChar, @function
 printChar:
 
-    movb    $0x0E, %ah 
-    int     $0x10
+    # AL = caracter a ser escrito na tela
+    movb    $0x0E, %ah  # AH = codigo para escrever na pagina ativa
+    int     $0x10       # interrupcao de teclado
 
-    cmp     $'\n', %al
-    jne     .notNL
+    # rotina de verificao de New Line e Carriage Return
+    cmp     $'\n', %al 
+    jne     .notNL      # AL != '\n' (nao apertou ENTER)
     mov     $'\r', %al
-    int     $0x10   
+    int     $0x10       # imprime \r apos o \n para fazer a quebra de linha
     jmp     .notCR
 
     .notNL: 
@@ -65,19 +68,21 @@ printChar:
 .type clearScreen, @function
 clearScreen:
 
-    movb    $0x00, %ah
-    movb    $0x02, %al
-    int     $0x10
+    movb    $0x00, %ah  # AH = set video mode
+    movb    $0x02, %al  # AL = requested mode (80x25 -  16 colors - alphanumeric)
+    int     $0x10       # interrupcao de video
     
     ret
 
 .type printString, @function
 printString:
-    lodsb
-    orb     %al, %al
+    # deve ser carregado o endereco da string em SI antes da chamada
+    lodsb   # carrega o byte no endereço DS:SI em AL, SI possui endereco da string
+            # incrementa SI
+    orb     %al, %al            # ainda existem caracteres?
     jz      .printStringEnd
-    movb    $0x0E, %ah
-    int     $0x10
+    movb    $0x0E, %ah          # AH = codigo para escrever na pagina ativa
+    int     $0x10               # interrupcao de teclado
     jmp     printString
 
     .printStringEnd:
@@ -86,47 +91,48 @@ printString:
 .type connectedDevices, @function
 connectedDevices:
     
-    int     $0x11
-    movw    %ax, %bx
+    int     $0x11       # interrupcao para determinacao de equipamento
+    # AX = retorno com os dispositivos conectados ou nao
+    movw    %ax, %bx    # salva o valor de AX
     
     movw    $connected, %si
     call    printString
 
-    and     $0x0001, %ax
-    cmp     $0, %ax
+    and     $0x0001, %ax        # mascara para determinar a presenca de diskette
+    cmp     $0, %ax             # if 0 then diskette not found
     je      .disketteNOTFound
-    movw    $disketteF, %si
+    movw    $disketteF, %si     # diskette found
     call    printString
     jmp     .coprocessor
 
     .disketteNOTFound:
-        movw    $disketteNF, %si
+        movw    $disketteNF, %si    # diskette not found
         call    printString
 
     .coprocessor:
-        movw    %bx, %ax
-        and     $0x0002, %ax
-        cmp     $0, %ax
+        movw    %bx, %ax                # restaura os valores de AX
+        and     $0x0002, %ax            # mascara para determinar a presenca de processador
+        cmp     $0, %ax                 # if 0 then math coprocessor not found
         je      .coprocessorNOTFound
-        movw    $coprocessorF, %si
+        movw    $coprocessorF, %si      # math coprocessor found
         call    printString
         jmp     .pointingdev
 
         .coprocessorNOTFound:
-            movw    $coprocessorNF, %si
+            movw    $coprocessorNF, %si     # math coprocessor not found
             call    printString
 
         .pointingdev:
-            movw    %bx, %ax
-            and     $0x0004, %ax
-            cmp     $0, %ax
+            movw    %bx, %ax                # restaura os valores de AX
+            and     $0x0004, %ax            # mascara para determinar a presenca de pointing device
+            cmp     $0, %ax                 # if 0 then pointing device not found
             je      .pointingdevNOTFound
-            movw    $pointingdevF, %si
+            movw    $pointingdevF, %si      # pointing device found
             call    printString
             jmp     .connectedDevicesEnd
 
             .pointingdevNOTFound:
-                movw    $pointingdevNF, %si
+                movw    $pointingdevNF, %si     # pointing device not found
                 call    printString
 
     .connectedDevicesEnd:
@@ -135,36 +141,36 @@ connectedDevices:
 .type availableRAM, @function
 availableRAM:
     
-    int     $0x12
-
-    movw    %ax, %bx
-    and     $0xF, %al
-    xorw    %cx, %cx
-    movw    $16, %cx
+    int     $0x12   # interrupcao memory size determination
+    # AX = retorno com o tamanho de memoria disponivel (em blocos de 1 kB)
+    movw    %ax, %bx    # salva o valor de AX 
+    and     $0xF, %al   # aplica a mascara para pegar os 4 bits menos significativos
+    xorw    %cx, %cx    # limpa CX
+    movb    $16, %cl    # contador do numero de bits para deslocamento (anda de 4 em 4 - nibbles)
 
     .printHEX:
-        sub     $4, %cx
-        shr     %cl, %ax
-        and     $0xF, %ax
+        sub     $4, %cx     # CL = CL - 4
+        shr     %cl, %ax    # shift right AX em CL bits
+        and     $0xF, %ax   # aplica a mascara para obter o valor do digito (mascara = 1111)
 
-        cmp     $10, %ax
+        cmp     $10, %ax    # if < 10 then NUMBER (0 - 9) else LETTER (A - F)
         jl      .printHEXnumber
 
         # apos a mascara fica 00001111 (15 dec - 0F hex) - tab. ASCII
         # subtraimos 10 para ficar 00000101
-        # 0100 0110 (F) = 00000101 (%ax) + 0100 0001 (A)
+        # 0100 0110 (F) = 00000101 (%ax) + 0100 0001 (ascii A)
         sub     $10, %ax    
         add     $'A', %ax
         call    printChar
         jmp     .printHEXend
 
         .printHEXnumber:
-            add     $'0', %ax
+            add     $'0', %ax   # soma o valor ASCII do 0 ao NUMBER
             call    printChar
 
         .printHEXend:
-            movw    %bx, %ax
-            cmp     $0, %cx
+            movw    %bx, %ax    # restaura o valor de AX
+            cmp     $0, %cx     # CX == 0, acabaram os digitos
             jne     .printHEX
 
     ret
