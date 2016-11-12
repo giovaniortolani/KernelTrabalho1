@@ -7,15 +7,14 @@ int main() {
 	video_initVideo();
 	video_clearScreen();
 
-	video_putString("Hello, world!");
-	video_putChar('\n');
-	video_putChar(get_register_ds());
-	video_putChar('\n');
-	video_putChar(get_register_ss());
-	video_putChar('\n');
-	video_putChar(get_register_cs());
-	video_putChar('\n');
-	printNumber(-13);
+	puts("Hello, world!");
+	putchar('\n');	
+	putchar(get_register_ds());
+	putchar('\n');	
+	putchar(get_register_ss());
+	putchar('\n');	
+	putchar(get_register_cs());
+	puts("\nTudo ok");
 	
 	abort();
 }

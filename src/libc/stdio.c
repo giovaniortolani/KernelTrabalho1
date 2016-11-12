@@ -29,3 +29,11 @@ void printNumber(int number, int base) {
 		base_pot /= base;
 	}
 }
+
+int putchar(int ch) {
+	video_putChar((char) ch);
+}
+
+int puts(const char* str) {
+	video_putString(str);
+}
