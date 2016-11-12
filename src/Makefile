@@ -1,7 +1,7 @@
 CFLGAS = -m32 -nostdlib -ffreestanding
 ASSEMLY_FLAGS = --32
 
-all:	boot.o video.o kernel.o string.o stdlib.o
+all:	boot.o video.o kernel.o string.o stdlib.o register.o
 	ld -m elf_i386 -T setup.ld -o kernel *.o 
 	rm -f *.o 
 
