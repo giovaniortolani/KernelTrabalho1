@@ -89,4 +89,5 @@ int printf(const char* format, ...){
 		} else putchar(format[i]);
 	}
 
+	return 1;
 }
