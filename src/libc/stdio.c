@@ -1,8 +1,8 @@
 #include "stdio.h"
 #include "../video.h"
 
-void printNumber(int number) {
-	int dec_pot = 1;
+void printNumber(int number, int base) {
+	int base_port = 1;
 
 	if (number < 0) {
 		video_putChar('-');
@@ -10,18 +10,18 @@ void printNumber(int number) {
 	}
 
 	do {
-		dec_pot *= 10;
-	} while (dec_pot < number);
-	dec_pot /= 10;
+		base_port *= base;
+	} while (base_port < number);
+	base_port /= base;
 
 	int rest = 0;
 	int put_num = 0;
-	while (dec_pot != 0) {
-		rest = number % dec_pot;
-		put_num = (number - rest) / dec_pot;
+	while (base_port != 0) {
+		rest = number % base_port;
+		put_num = (number - rest) / base_port;
 		video_putChar('0' + put_num);
 
 		number = rest;
-		dec_pot /= 10;
+		base_port /= base;
 	}
 }
