@@ -12,10 +12,10 @@ video.o:   video.c
 	gcc $(CFLGAS) -c $<
 
 kernel.o:   kernel.c
-	gcc $(CFLGAS) -I./ -c $<
+	gcc $(CFLGAS) -I./libc -c $<
 
 #%.o:	libc/src/%.c	
-	#gcc $(CFLGAS) -I./ -c $<
+	#gcc $(CFLGAS) -I./libc -c $<
 
 run:
 	qemu-system-i386 -kernel kernel
