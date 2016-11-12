@@ -2,16 +2,17 @@
 .set FLAGS, 	0 | 1
 .set CHECKSUM, 	-(MAGIC + FLAGS)
 
+.section .multiboot
 multiboot_header:
 	.align 4
-	.long FLAGS
 	.long MAGIC
+	.long FLAGS
 	.long CHECKSUM
 
 .section .bss
 .align 16
 stack_bottom:
-.skip 16384 # 16 KiB
+.skip 16384
 stack_top:
 
 .section 	.text
@@ -20,7 +21,7 @@ stack_top:
 start:
 _start:
 	cli
-	mov $stack_top, %esp	# Move stack pointer to top of stack
+	mov $stack_top, %esp
 	call main
 
 loop:	

@@ -15,7 +15,7 @@ void video_initVideo() {
 }
 
 void video_clearScreen() {
-	unsigned int = 0;
+	unsigned int i = 0;
 	while (i < VIDEO_ROWS * VIDEO_COLS * 2) {
 		video_ptr[i++] = ' ';
 		video_ptr[i++] = vgaColor;
@@ -24,7 +24,7 @@ void video_clearScreen() {
 	return;
 }
 
-void video_setColor(const colors font, const colors bg) {
+void video_setColor(const char font, const char bg) {
 	vgaColor = font | bg << 4;
 	return;
 }
@@ -37,7 +37,7 @@ void video_putChar(const char character) {
 	}
 
 
-	unsigned int index = 2 * ((row * VIDEO_COLS) + col);	
+	unsigned int index = 2 * ((mouseRow * VIDEO_COLS) + mouseCol);	
 	video_ptr[index] = character;
 	video_ptr[index + 1] = vgaColor;
 

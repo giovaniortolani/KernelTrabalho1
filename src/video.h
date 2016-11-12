@@ -27,7 +27,7 @@ enum colors {
 void video_initVideo();
 void video_clearScreen();
 
-void video_setColor(const colors font, const colors background);
+void video_setColor(const char font, const char background);
 void video_putChar(const char character);
 void video_putString(const char* str);
 

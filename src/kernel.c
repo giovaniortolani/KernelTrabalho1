@@ -1,7 +1,7 @@
 #include "video.h"
 
 int main() {
-	video_initVide();
+	video_initVideo();
 	video_clearScreen();
 
 	video_putString("Hello, world!");
