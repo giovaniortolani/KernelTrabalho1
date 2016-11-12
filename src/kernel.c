@@ -1,4 +1,5 @@
 #include "video.h"
+#include "stdlib.h"
 
 int main() {
 	video_initVideo();
@@ -6,5 +7,5 @@ int main() {
 
 	video_putString("Hello, world!");
 	
-	return 0;
+	abort();
 }

@@ -1,7 +1,7 @@
 CFLGAS = -m32 -nostdlib -ffreestanding
 ASSEMLY_FLAGS = --32
 
-all:	boot.o video.o kernel.o 
+all:	boot.o video.o kernel.o string.o stdlib.o
 	ld -m elf_i386 -T setup.ld -o kernel *.o 
 	rm -f *.o 
 
@@ -14,8 +14,8 @@ video.o:   video.c
 kernel.o:   kernel.c
 	gcc $(CFLGAS) -I./libc -c $<
 
-#%.o:	libc/src/%.c	
-	#gcc $(CFLGAS) -I./libc -c $<
+%.o:	libc/%.c	
+	gcc $(CFLGAS) -I./libc -c $<
 
 run:
 	qemu-system-i386 -kernel kernel
